@@ -102,4 +102,51 @@ defmodule Mastery.Core.Quiz do
 
   defp add_to_list_or_nil(nil, template), do: [template]
   defp add_to_list_or_nil(templates, template), do: [template | templates]
+
+  def answer_question(quiz, %Response{correct: true} = response) do
+    new_quiz =
+      quiz
+      |> increment_record
+      |> save_response(response)
+
+    maybe_advance(new_quiz, mastered?(new_quiz))
+  end
+
+  def answer_question(quiz, %Response{correct: false} = response) do
+    quiz
+    |> reset_record
+    |> save_response(response)
+  end
+
+  defp increment_record(%{current_question: question} = quiz) do
+    new_record = Map.update(quiz.record, question.template.name, 1, &(&1 + 1))
+    Map.put(quiz, :record, new_record)
+  end
+
+  defp save_response(quiz, response) do
+    Map.put(quiz, :last_response, response)
+  end
+
+  defp mastered?(quiz) do
+    score = Map.get(quiz.record, template(quiz).name, 0)
+    score == quiz.mastery
+  end
+
+  defp maybe_advance(quiz, false = _mastered), do: quiz
+  defp maybe_advance(quiz, true = _mastered), do: advance(quiz)
+
+  defp advance(quiz) do
+    quiz
+    |> move_template(:mastered)
+    |> reset_record
+    |> reset_used
+  end
+
+  defp reset_record(%{current_question: question} = quiz) do
+    Map.put(quiz, :record, Map.delete(quiz.record, question.template.name))
+  end
+
+  defp reset_used(%{current_question: question} = quiz) do
+    Map.put(quiz, :used, List.delete(quiz.used, question.template))
+  end
 end
