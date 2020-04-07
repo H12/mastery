@@ -9,15 +9,19 @@ defmodule Mastery.Boundary.QuizValidator do
 
   def errors(_fields), do: [{nil, "A Map of fields is required"}]
 
-  def validate_title(title) when is_binary(title) do
-    check(String.match?(title, ~r{\S}), {:error, "can't be blank"})
-  end
-
-  def validate_title(_title), do: {:error, "must be a string"}
+  def validate_title(title), do: validate_string(title)
 
   def validate_mastery(mastery) when is_integer(mastery) do
     check(mastery >= 1, {:error, "must be greater than zero"})
   end
 
   def validate_mastery(_mastery), do: {:error, "must be an integer"}
+
+  def validate_answer(answer), do: validate_string(answer)
+
+  defp validate_string(string) when is_binary(string) do
+    check(String.match?(string, ~r{\S}), {:error, "can't be blank"})
+  end
+
+  defp validate_string(_string), do: {:error, "must be a binary"}
 end

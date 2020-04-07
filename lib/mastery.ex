@@ -35,6 +35,9 @@ defmodule Mastery do
   end
 
   def answer_question(session, answer) do
-    GenServer.call(session, {:answer_question, answer})
+    with :ok <- QuizValidator.validate_answer(answer),
+         :ok <- GenServer.call(session, {:answer_question, answer}),
+         do: :ok,
+         else: (error -> error)
   end
 end
