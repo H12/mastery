@@ -23,6 +23,7 @@ defmodule Mastery.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.12.3", only: :test}
     ]
   end
