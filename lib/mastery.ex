@@ -4,13 +4,6 @@ defmodule Mastery do
   alias Mastery.Core.Quiz
 
   @doc """
-  Starts a new QuizManager process with the name "QuizManager"
-  """
-  def start_quiz_manager() do
-    GenServer.start_link(QuizManager, %{}, name: QuizManager)
-  end
-
-  @doc """
   Builds a quiz on the (hopefully) already-started QuizManager from the provided quiz fields.
   """
   def build_quiz(fields) do
@@ -36,8 +29,8 @@ defmodule Mastery do
   """
   def take_quiz(title, email) do
     with %Quiz{} = quiz <- QuizManager.lookup_quiz_by_title(title),
-         {:ok, session} <- GenServer.start_link(QuizSession, {quiz, email}) do
-      session
+         {:ok, _} <- QuizSession.take_quiz(quiz, email) do
+      {title, email}
     else
       error -> error
     end
@@ -47,7 +40,7 @@ defmodule Mastery do
   Selects a question for a given QuizSession
   """
   def select_question(session) do
-    GenServer.call(session, :select_question)
+    QuizSession.select_question(session)
   end
 
   @doc """
@@ -55,7 +48,7 @@ defmodule Mastery do
   """
   def answer_question(session, answer) do
     with :ok <- QuizValidator.validate_answer(answer),
-         :ok <- GenServer.call(session, {:answer_question, answer}),
+         :ok <- QuizSession.answer_question(session, answer),
          do: :ok,
          else: (error -> error)
   end
