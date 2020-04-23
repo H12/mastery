@@ -3,6 +3,8 @@ defmodule Mastery do
   alias Mastery.Boundary.{TemplateValidator, QuizValidator}
   alias Mastery.Core.Quiz
 
+  @persistence_fn Application.get_env(:mastery, :persistence_fn)
+
   @doc """
   Builds a quiz on the (hopefully) already-started QuizManager from the provided quiz fields.
   """
@@ -39,16 +41,16 @@ defmodule Mastery do
   @doc """
   Selects a question for a given QuizSession
   """
-  def select_question(session) do
-    QuizSession.select_question(session)
+  def select_question(name) do
+    QuizSession.select_question(name)
   end
 
   @doc """
   Given a QuizSession and a provided answer, submits that answer to the session.
   """
-  def answer_question(session, answer) do
+  def answer_question(name, answer, persistence_fn \\ @persistence_fn) do
     with :ok <- QuizValidator.validate_answer(answer),
-         :ok <- QuizSession.answer_question(session, answer),
+         :ok <- QuizSession.answer_question(name, answer, persistence_fn),
          do: :ok,
          else: (error -> error)
   end

@@ -6,7 +6,7 @@ defmodule MasteryPersistence do
     {:ok, result} =
       Repo.transaction(fn ->
         %{
-          quiz_title: to_string(response.quiz.title),
+          quiz_title: to_string(response.quiz_title),
           template_name: to_string(response.template_name),
           to: response.to,
           email: response.email,
