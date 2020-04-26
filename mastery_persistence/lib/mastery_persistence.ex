@@ -8,7 +8,7 @@ defmodule MasteryPersistence do
         %{
           quiz_title: to_string(response.quiz_title),
           template_name: to_string(response.template_name),
-          to: response.to,
+          question: response.question,
           email: response.email,
           answer: response.answer,
           correct: response.correct,
