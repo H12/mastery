@@ -7,7 +7,7 @@ defmodule MasteryTest do
   alias MasteryPersistence.Response
 
   setup do
-    enable_psersistence()
+    enable_persistence()
 
     always_add_1_to_2 = [
       template_fields(generators: addition_generators([1], [2]))
@@ -18,7 +18,7 @@ defmodule MasteryTest do
     :ok
   end
 
-  defp enable_psersistence() do
+  defp enable_persistence() do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Repo)
   end
 
