@@ -2,7 +2,7 @@ defmodule MasteryPersistenceTest do
   use ExUnit.Case
   alias MasteryPersistence.{Response, Repo}
 
-  defp checkout_and_cleanup do
+  defp checkout_and_clean_repo do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Repo)
 
     # Clear out Responses to account for other test suites
@@ -10,7 +10,7 @@ defmodule MasteryPersistenceTest do
   end
 
   setup do
-    checkout_and_cleanup()
+    checkout_and_clean_repo()
 
     response = %{
       quiz_title: :simple_addition,
