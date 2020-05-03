@@ -68,4 +68,35 @@ defmodule MasteryTest do
     assert give_right_answer(session) == :finished
     assert QuizSession.active_sessions_for(Math.quiz_fields().title) == []
   end
+
+  test "Reports validation errors when building quizzes" do
+    missing_title = Map.delete(Math.quiz_fields(), :title)
+    invalid_title = Map.put(Math.quiz_fields(), :title, "tortle")
+    invalid_mastery = Map.put(Math.quiz_fields(), :mastery, "3")
+
+    assert [title: "is required"] == Mastery.build_quiz(missing_title)
+    assert [title: "must be an atom"] == Mastery.build_quiz(invalid_title)
+    assert [mastery: "must be an integer"] == Mastery.build_quiz(invalid_mastery)
+  end
+
+  test "Reports validation errors when adding templates" do
+    Mastery.build_quiz(Math.quiz_fields())
+    quiz_title = Math.quiz_fields().title
+    bad_generators = template_fields(generators: %{"not an atom" => "not a list or function"})
+
+    # Validates required fields are present
+    assert [:name, :category, :raw, :generators, :checker] ==
+             Mastery.add_template(quiz_title, []) |> Keyword.keys()
+
+    # Validates template generators are the correct format
+    assert [generators: {:error, "must be a string to list or function pair"}] ==
+             Mastery.add_template(quiz_title, bad_generators)
+  end
+
+  test "Reports validation errors when scheduling quizzes" do
+    missing_title = Map.delete(Math.quiz_fields(), :title)
+    now = DateTime.utc_now()
+
+    assert [title: "is required"] == Mastery.schedule_quiz(missing_title, [], now, now)
+  end
 end

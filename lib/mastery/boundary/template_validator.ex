@@ -11,6 +11,7 @@ defmodule Mastery.Boundary.TemplateValidator do
     |> require(fields, :raw, &validate_raw/1)
     |> require(fields, :generators, &validate_generators/1)
     |> require(fields, :checker, &validate_checker/1)
+    |> report_errors
   end
 
   def errors(_fields), do: [{nil, "A keyword list of fields is required"}]

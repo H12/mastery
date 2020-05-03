@@ -65,7 +65,7 @@ defmodule Mastery.Boundary.Proctor do
   defp start_quiz(quiz, now) do
     Logger.info("Starting quiz #{quiz.fields.title}...")
     notify_start(quiz)
-    QuizManager.build_quiz(quiz.fields)
+    Mastery.build_quiz(quiz.fields)
     Enum.each(quiz.templates, &add_template(quiz, &1))
     timeout = DateTime.diff(quiz.end_at, now, :millisecond)
 
@@ -87,7 +87,7 @@ defmodule Mastery.Boundary.Proctor do
   end
 
   defp add_template(quiz, template_fields) do
-    QuizManager.add_template(quiz.fields.title, template_fields)
+    Mastery.add_template(quiz.fields.title, template_fields)
   end
 
   defp build_reply_with_timeout(reply, quizzes, now) do

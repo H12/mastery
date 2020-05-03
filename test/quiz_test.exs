@@ -77,12 +77,12 @@ defmodule QuizTest do
     Quiz.answer_question(quiz, response)
   end
 
-  def assert_more_questions(quiz) do
+  defp assert_more_questions(quiz) do
     refute is_nil(quiz)
     quiz
   end
 
-  def refute_more_questions(quiz) do
+  defp refute_more_questions(quiz) do
     assert is_nil(quiz)
     quiz
   end

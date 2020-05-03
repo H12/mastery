@@ -12,6 +12,9 @@ defmodule Mastery.Boundary.Validator do
     end
   end
 
+  def report_errors([]), do: :ok
+  def report_errors(errors), do: errors
+
   def check(true = _valid, _message), do: :ok
   def check(false = _valid, message), do: message
 
@@ -24,13 +27,23 @@ defmodule Mastery.Boundary.Validator do
     errors ++ [{field_name, "is required"}]
   end
 
-  defp check_field(:ok, _errors, _field_name), do: :ok
+  defp check_field(:ok, errors, _field_name), do: errors
 
   defp check_field({:error, message}, errors, field_name) do
-    errors ++ [{field_name}, message]
+    errors ++ [{field_name, message}]
   end
 
   defp check_field({:errors, messages}, errors, field_name) do
     errors ++ Enum.map(messages, &{field_name, &1})
   end
+
+  def validate_atom(atom) do
+    check(is_atom(atom), {:error, "must be an atom"})
+  end
+
+  def validate_string(string) when is_binary(string) do
+    check(String.match?(string, ~r{\S}), {:error, "can't be blank"})
+  end
+
+  def validate_string(_string), do: {:error, "must be a binary"}
 end
