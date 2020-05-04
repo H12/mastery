@@ -28,4 +28,40 @@ defmodule ProctorTest do
     assert_receive {:stopped, :timed_addition}
     assert [] == QuizSession.active_sessions_for(quiz.title)
   end
+
+  test "multiple quizzes can be scheduled concurrently" do
+    quiz_one = Math.quiz_fields() |> Map.put(:title, :timed_addition_one)
+    quiz_two = Math.quiz_fields() |> Map.put(:title, :timed_addition_two)
+    email = "student@example.com"
+    now = DateTime.utc_now()
+
+    assert :ok ==
+             Mastery.schedule_quiz(
+               quiz_one,
+               [Math.template_fields()],
+               DateTime.add(now, 50, :millisecond),
+               DateTime.add(now, 100, :millisecond),
+               self()
+             )
+
+    assert :ok ==
+             Mastery.schedule_quiz(
+               quiz_two,
+               [Math.template_fields()],
+               DateTime.add(now, 60, :millisecond),
+               DateTime.add(now, 110, :millisecond),
+               self()
+             )
+
+    assert_receive {:started, :timed_addition_one}
+    assert_receive {:started, :timed_addition_two}
+    assert Mastery.take_quiz(quiz_one.title, email)
+    assert Mastery.take_quiz(quiz_two.title, email)
+
+    assert_receive {:stopped, :timed_addition_one}
+    assert [] == QuizSession.active_sessions_for(quiz_one.title)
+
+    assert_receive {:stopped, :timed_addition_two}
+    assert [] == QuizSession.active_sessions_for(quiz_two.title)
+  end
 end
