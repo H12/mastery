@@ -11,8 +11,10 @@ _That said_, the end-point of the book leaves the app with a little to be desire
 - The Proctor is unnecessarily coupled to QuizManager for building quizzes and adding templates
   - Note: It's also coupled to QuizManager for removing quizzes, but that's necessary because quiz removal functionality is not on the public API provided by Mastery.ex
 
-This repo includes fixes for these problems. That "validators _always_ return `:ok`" one was particularly insidious, because it means all the quiz titles the book has you use throughout (e.g. `:simple_addition`) are _technically_ invalid, as the validators stipulate titles are supposed to be non-blank binaries.
+This repo includes fixes for these problems.
+
+That "validators _always_ return `:ok`" one is particularly insidious, because it means all the quiz titles the book has you use throughout (e.g. `:simple_addition`) are _technically_ invalid, as the validators stipulate titles are supposed to be non-blank binaries.
 
 ## Acknowledgements
 
-As mentioned above, the book this project came from is titled _Designing Elixir Systems with OTP_, and I found it to be a highly-instructive read. If you're interested in checking it out, the check its listing out [on PragProg](https://pragprog.com/book/jgotp/designing-elixir-systems-with-otp).
+As mentioned above, the book this project came from is titled _Designing Elixir Systems with OTP_, and I found it to be a highly-instructive read. If you're interested in checking it out, here's its listing [on PragProg](https://pragprog.com/book/jgotp/designing-elixir-systems-with-otp).
